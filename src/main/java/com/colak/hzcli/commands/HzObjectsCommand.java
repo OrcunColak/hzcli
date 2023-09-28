@@ -1,6 +1,5 @@
 package com.colak.hzcli.commands;
 
-import com.colak.hzcli.shell.ShellHelper;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +13,14 @@ import org.springframework.shell.table.TableModelBuilder;
 import java.util.function.Consumer;
 
 @ShellComponent
-public class HzObjectsCommand {
+public class HzObjectsCommand extends AbstractCommand {
+
+    private HazelcastInstance hazelcastClient;
 
     @Autowired
-    HazelcastInstance hazelcastClient;
-
-    @Autowired
-    ShellHelper shellHelper;
+    public void setHazelcastClient(HazelcastInstance hazelcastClient) {
+        this.hazelcastClient = hazelcastClient;
+    }
 
     @ShellMethod("List Hazelcast distributed objects")
     void objects() {

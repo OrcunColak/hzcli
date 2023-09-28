@@ -33,7 +33,9 @@ public class ShellHelper {
      * @return colored message
      */
     public String getColored(String message, PromptColor color) {
-        return (new AttributedStringBuilder()).append(message, AttributedStyle.DEFAULT.foreground(color.toJlineAttributedStyle())).toAnsi();
+        return (new AttributedStringBuilder())
+                .append(message, AttributedStyle.DEFAULT.foreground(color.toJlineAttributedStyle()))
+                .toAnsi();
     }
 
     public String getInfoMessage(String message) {
