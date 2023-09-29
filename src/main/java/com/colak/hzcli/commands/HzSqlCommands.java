@@ -1,6 +1,8 @@
 package com.colak.hzcli.commands;
 
+import com.hazelcast.sql.SqlColumnMetadata;
 import com.hazelcast.sql.SqlResult;
+import com.hazelcast.sql.SqlRowMetadata;
 import com.hazelcast.sql.SqlService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -13,17 +15,38 @@ import org.springframework.shell.standard.ShellOption;
 @Slf4j
 public class HzSqlCommands extends AbstractCommand {
 
-    @ShellMethod("Execute HZ SQL")
+    @ShellMethod("Select with HZ SQL")
     void sql(@ShellOption @Valid @NotNull String sql) {
         try {
             SqlService sqlService = hazelcastClient.getSql();
             try (SqlResult sqlResult = sqlService.execute(sql)) {
+                if (sqlResult.isRowSet()) {
+                    printSelectResult(sqlResult);
+                }
+                shellHelper.printSuccess("Success");
             }
         } catch (Exception exception) {
-            log.error("Sql Exception:", exception);
+            log.error("Sql Exception: {}", exception.getMessage(), exception);
+            shellHelper.printError("Failed");
         }
-
     }
 
+    private void printSelectResult(SqlResult sqlResult) {
+        String[] columnNames = getColumnNames(sqlResult);
+        int numberOfColumns = columnNames.length;
+        embedInTable(columnNames,
+                builder -> sqlResult.forEach(sqlRow -> {
+                    builder.addRow();
+                    for (int index = 0; index < numberOfColumns; index++) {
+                        builder.addValue(sqlRow.getObject(index));
+                    }
+                }));
+    }
 
+    private String[] getColumnNames(SqlResult sqlResult) {
+        SqlRowMetadata rowMetadata = sqlResult.getRowMetadata();
+        return rowMetadata.getColumns().stream()
+                .map(SqlColumnMetadata::getName)
+                .toArray(String[]::new);
+    }
 }
