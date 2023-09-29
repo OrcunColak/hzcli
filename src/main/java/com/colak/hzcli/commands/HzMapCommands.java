@@ -1,12 +1,9 @@
 package com.colak.hzcli.commands;
 
-import com.hazelcast.core.DistributedObject;
-import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.jline.reader.EndOfFileException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -17,34 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @ShellComponent
-public class HzObjectsCommand extends AbstractCommand {
-
-    private HazelcastInstance hazelcastClient;
-
-    @Autowired
-    public void setHazelcastClient(HazelcastInstance hazelcastClient) {
-        this.hazelcastClient = hazelcastClient;
-    }
-
-    @ShellMethod("List Hazelcast distributed objects")
-    void objects() {
-        embedInTable(
-                new String[]{"type", "name"},
-                builder -> hazelcastClient.getDistributedObjects().forEach(distributedObject -> {
-                    builder.addRow();
-                    String type = getDistributedObjectType(distributedObject);
-                    builder.addValue(type);
-                    builder.addValue(distributedObject.getName());
-                }));
-    }
-
-    private static String getDistributedObjectType(DistributedObject distributedObject) {
-        String type = "";
-        if (distributedObject instanceof IMap) {
-            type = "IMap";
-        }
-        return type;
-    }
+public class HzMapCommands extends AbstractCommand {
 
     @ShellMethod(key = "showm", prefix = "-", value = "List all entries stored in the map")
     void showm(@ShellOption @Valid @NotNull String name,
