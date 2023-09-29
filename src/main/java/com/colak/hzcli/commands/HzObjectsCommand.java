@@ -75,7 +75,8 @@ public class HzObjectsCommand extends AbstractCommand {
         final int fetchSize = 10;
         Iterator<Map.Entry<Object, Object>> iterator = map.iterator();
         int page = 1;
-        while (true) {
+        boolean continueLoop = true;
+        while (continueLoop) {
             List<Map.Entry<Object, Object>> list = takeNElements(iterator, fetchSize);
             if (list.isEmpty()) {
                 break;
@@ -92,7 +93,7 @@ public class HzObjectsCommand extends AbstractCommand {
                 try {
                     inputReader.prompt("Press any key to view the page " + page);
                 } catch (EndOfFileException exception) {
-                    break;
+                    continueLoop = false;
                 }
             }
         }
