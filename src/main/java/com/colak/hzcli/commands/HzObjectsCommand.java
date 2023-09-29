@@ -1,16 +1,20 @@
 package com.colak.hzcli.commands;
 
+import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.jline.reader.EndOfFileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import org.springframework.shell.table.BorderStyle;
-import org.springframework.shell.table.TableBuilder;
-import org.springframework.shell.table.TableModelBuilder;
 
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @ShellComponent
 public class HzObjectsCommand extends AbstractCommand {
@@ -25,35 +29,81 @@ public class HzObjectsCommand extends AbstractCommand {
     @ShellMethod("List Hazelcast distributed objects")
     void objects() {
         embedInTable(
-                new String[] {"name"},
-                buider -> hazelcastClient.getDistributedObjects().forEach(distributedObject -> {
-                    buider.addRow();
-                    buider.addValue(distributedObject.getName());
+                new String[]{"type", "name"},
+                builder -> hazelcastClient.getDistributedObjects().forEach(distributedObject -> {
+                    builder.addRow();
+                    String type = getDistributedObjectType(distributedObject);
+                    builder.addValue(type);
+                    builder.addValue(distributedObject.getName());
                 }));
     }
 
-    @ShellMethod("List all entries stored in the map")
-    void showm(@ShellOption String name) {
+    private static String getDistributedObjectType(DistributedObject distributedObject) {
+        String type = "";
+        if (distributedObject instanceof IMap) {
+            type = "IMap";
+        }
+        return type;
+    }
+
+    @ShellMethod(key = "showm", prefix = "-", value = "List all entries stored in the map")
+    void showm(@ShellOption @Valid @NotNull String name,
+               @ShellOption(value = {"-p",},
+                       help = "Optional pagination flag")
+               boolean paginate) {
+        if (paginate) {
+            showMapAsPages(name);
+        } else {
+            showMap(name);
+        }
+    }
+
+    void showMap(String name) {
         IMap<Object, Object> map = hazelcastClient.getMap(name);
         embedInTable(
-                new String[] {"key", "value"},
-                buider -> map.forEach(entry -> {
-                    buider.addRow();
-                    buider.addValue(entry.getKey());
-                    buider.addValue(entry.getValue());
+                new String[]{"key", "value"},
+                builder -> map.forEach(entry -> {
+                    builder.addRow();
+                    builder.addValue(entry.getKey());
+                    builder.addValue(entry.getValue());
                 }));
     }
 
-    private void embedInTable(String[] names, Consumer<TableModelBuilder<Object>> fillData) {
-        TableModelBuilder<Object> builder = new TableModelBuilder<>();
-        builder.addRow();
-        for (String name : names) {
-            builder.addValue(name);
+    void showMapAsPages(String name) {
+        shellHelper.printSuccess("Press Ctrl +D to break");
+        IMap<Object, Object> map = hazelcastClient.getMap(name);
+        final int fetchSize = 10;
+        Iterator<Map.Entry<Object, Object>> iterator = map.iterator();
+        int page = 1;
+        while (true) {
+            List<Map.Entry<Object, Object>> list = takeNElements(iterator, fetchSize);
+            if (list.isEmpty()) {
+                break;
+            }
+            page++;
+            embedInTable(
+                    new String[]{"key", "value"},
+                    builder -> list.forEach(entry -> {
+                        builder.addRow();
+                        builder.addValue(entry.getKey());
+                        builder.addValue(entry.getValue());
+                    }));
+            if (iterator.hasNext()) {
+                try {
+                    inputReader.prompt("Press any key to view the page " + page);
+                } catch (EndOfFileException exception) {
+                    break;
+                }
+            }
         }
-        fillData.accept(builder);
+    }
 
-        TableBuilder tableBuilder = new TableBuilder(builder.build());
-        tableBuilder.addHeaderAndVerticalsBorders(BorderStyle.oldschool);
-        shellHelper.printInfo(tableBuilder.build().render(100));
+    public <T> List<T> takeNElements(Iterator<T> iterator, int n) {
+        List<T> elements = new ArrayList<>();
+
+        for (int index = 0; index < n && iterator.hasNext(); index++) {
+            elements.add(iterator.next());
+        }
+        return elements;
     }
 }
