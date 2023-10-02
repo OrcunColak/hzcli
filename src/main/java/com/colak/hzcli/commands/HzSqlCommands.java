@@ -15,6 +15,11 @@ import org.springframework.shell.standard.ShellOption;
 @Slf4j
 public class HzSqlCommands extends AbstractCommand {
 
+//    sql "CREATE DATA CONNECTION IF NOT EXISTS foo TYPE JDBC SHARED OPTIONS('jdbcUrl'='jdbc:postgresql://localhost:5432/db','user'='postgres','password'='postgres')"
+//    sql "CREATE OR REPLACE MAPPING myworker  DATA CONNECTION foo"
+//    sql "SELECT * from myworker"
+//    sql "SELECT * from myworker1"
+
     @ShellMethod("Select with HZ SQL")
     void sql(@ShellOption @Valid @NotNull String sql) {
         try {
