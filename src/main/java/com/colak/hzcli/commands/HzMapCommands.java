@@ -16,6 +16,18 @@ import java.util.Map;
 @ShellComponent
 public class HzMapCommands extends AbstractCommand {
 
+    @ShellMethod(key = "showms", value = "Show the size of the map")
+    void showms(@ShellOption @Valid @NotNull String name) {
+        IMap<Object, Object> map = hazelcastClient.getMap(name);
+        embedInTable(
+                new String[]{"name", "size"},
+                builder -> {
+                    builder.addRow();
+                    builder.addValue(name);
+                    builder.addValue(map.size());
+                });
+    }
+
     @ShellMethod(key = "showm", prefix = "-", value = "List all entries stored in the map")
     void showm(@ShellOption @Valid @NotNull String name,
                @ShellOption(value = {"-p",},
