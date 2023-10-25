@@ -7,8 +7,8 @@ import org.jline.reader.EndOfFileException;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.table.TableModelBuilder;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +44,7 @@ public class HzMapCommands extends AbstractCommand {
         IMap<Object, Object> map = hazelcastClient.getMap(name);
         embedInTable(
                 new String[]{"key", "value"},
-                builder -> map.forEach(entry -> {
-                    builder.addRow();
-                    builder.addValue(entry.getKey());
-                    builder.addValue(entry.getValue());
-                }));
+                builder -> map.forEach(entry -> printMapEntry(builder, entry)));
     }
 
     void showMapAsPages(String name) {
@@ -59,21 +55,17 @@ public class HzMapCommands extends AbstractCommand {
         int page = 1;
         boolean continueLoop = true;
         while (continueLoop) {
-            List<Map.Entry<Object, Object>> list = takeNElements(iterator, fetchSize);
+            List<Map.Entry<Object, Object>> list = IteratorUtil.takeNElements(iterator, fetchSize);
             if (list.isEmpty()) {
                 break;
             }
             page++;
             embedInTable(
                     new String[]{"key", "value"},
-                    builder -> list.forEach(entry -> {
-                        builder.addRow();
-                        builder.addValue(entry.getKey());
-                        builder.addValue(entry.getValue());
-                    }));
+                    builder -> list.forEach(entry -> printMapEntry(builder, entry)));
             if (iterator.hasNext()) {
                 try {
-                    inputReader.prompt("Press any key to view the page " + page);
+                    inputReader.prompt("Press any key to view the next page " + page);
                 } catch (EndOfFileException exception) {
                     continueLoop = false;
                 }
@@ -81,12 +73,9 @@ public class HzMapCommands extends AbstractCommand {
         }
     }
 
-    public <T> List<T> takeNElements(Iterator<T> iterator, int n) {
-        List<T> elements = new ArrayList<>();
-
-        for (int index = 0; index < n && iterator.hasNext(); index++) {
-            elements.add(iterator.next());
-        }
-        return elements;
+    private void printMapEntry(TableModelBuilder<Object> builder, Map.Entry<Object, Object> entry) {
+        builder.addRow();
+        builder.addValue(entry.getKey());
+        builder.addValue(entry.getValue());
     }
 }
