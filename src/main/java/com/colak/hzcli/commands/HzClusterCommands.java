@@ -1,6 +1,5 @@
 package com.colak.hzcli.commands;
 
-import com.hazelcast.cluster.ClusterState;
 import com.hazelcast.version.MemberVersion;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -25,16 +24,5 @@ public class HzClusterCommands extends AbstractCommand {
                     MemberVersion version = member.getVersion();
                     builder.addValue(version);
                 }));
-    }
-
-    @ShellMethod(key = "clusterstate", value = "Show Hazelcast cluster state")
-    void clusterstate() {
-        embedInTable(
-                new String[]{"clusterstate"},
-                builder -> {
-                    builder.addRow();
-                    ClusterState clusterState = hazelcastClient.getCluster().getClusterState();
-                    builder.addValue(clusterState);
-                });
     }
 }

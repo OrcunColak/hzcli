@@ -1,7 +1,7 @@
 package com.colak.hzcli.config;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,14 +10,12 @@ import org.springframework.context.annotation.Configuration;
 public class HzConfig {
 
     @Bean
-    public Config hazelcastConfig() {
-        Config config = new Config();
-        config.setLiteMember(true);
-        return config;
+    public ClientConfig hazelcastConfig() {
+        return new ClientConfig();
     }
 
     @Bean
     public HazelcastInstance hazelcastInstance() {
-        return Hazelcast.newHazelcastInstance(hazelcastConfig());
+        return HazelcastClient.newHazelcastClient(hazelcastConfig());
     }
 }
