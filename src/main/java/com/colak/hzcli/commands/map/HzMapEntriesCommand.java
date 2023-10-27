@@ -1,5 +1,7 @@
-package com.colak.hzcli.commands;
+package com.colak.hzcli.commands.map;
 
+import com.colak.hzcli.commands.AbstractCommand;
+import com.colak.hzcli.commands.IteratorUtil;
 import com.hazelcast.map.IMap;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,23 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 @ShellComponent
-public class HzMapCommands extends AbstractCommand {
+public class HzMapEntriesCommand extends AbstractCommand {
 
-    @ShellMethod(key = "showms", value = "Show the size of the map")
-    void showms(@ShellOption @Valid @NotNull String name) {
-        IMap<Object, Object> map = hazelcastClient.getMap(name);
-        embedInTable(
-                new String[]{"name", "size"},
-                builder -> {
-                    builder.addRow();
-                    builder.addValue(name);
-                    builder.addValue(map.size());
-                });
-    }
-
-    @ShellMethod(key = "showm", prefix = "-", value = "List all entries stored in the map")
-    void showm(@ShellOption @Valid @NotNull String name,
-               @ShellOption(value = {"-p",},
+    @ShellMethod(key = "m.entries", prefix = "-", value = "List all entries stored in the map")
+    void showMapEntries(@ShellOption @Valid @NotNull String name,
+                        @ShellOption(value = {"-p",},
                        help = "Optional pagination flag")
                boolean paginate) {
         if (paginate) {

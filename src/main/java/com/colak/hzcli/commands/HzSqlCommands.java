@@ -27,7 +27,7 @@ public class HzSqlCommands extends AbstractCommand {
 //    sql "SELECT * from myworker1"
 //    sql "select * from table(generate_stream(1)) LIMIT 2"
 
-    @ShellMethod("Select with HZ SQL")
+    @ShellMethod(key = "sql", value ="Select with HZ SQL")
     void sql(@ShellOption @Valid @NotNull String sql) {
         try {
             SqlService sqlService = hazelcastClient.getSql();
