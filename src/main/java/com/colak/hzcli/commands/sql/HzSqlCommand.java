@@ -21,7 +21,7 @@ import java.util.List;
 
 @ShellComponent
 @Slf4j
-public class HzSqlCommands extends AbstractCommand {
+public class HzSqlCommand extends AbstractCommand {
 
 //    sql "CREATE DATA CONNECTION IF NOT EXISTS foo TYPE JDBC SHARED OPTIONS('jdbcUrl'='jdbc:postgresql://localhost:5432/db','user'='postgres','password'='postgres')"
 //    sql "CREATE OR REPLACE MAPPING myworker  DATA CONNECTION foo"
