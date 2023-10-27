@@ -3,6 +3,11 @@
 This is a simple command line tool to access a Hazelcast cluster and execute some commands
 It uses Spring Shell underneath.
 
+Run the application with the following command:
+```
+mvn spring-boot:run
+```
+
 ## Map Commands
 * **m.entries** : This command shows the entries of a map
 * **m.keytypes** : This command shows the types of keys in a map.  The original idea is from [Introducing CLC: The New Hazelcast Command-Line Experience](https://hazelcast.com/blog/introducing-clc-the-new-hazelcast-command-line-experience/)
