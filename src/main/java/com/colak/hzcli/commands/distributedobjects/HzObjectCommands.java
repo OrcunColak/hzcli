@@ -1,5 +1,6 @@
-package com.colak.hzcli.commands;
+package com.colak.hzcli.commands.distributedobjects;
 
+import com.colak.hzcli.commands.AbstractCommand;
 import com.hazelcast.core.DistributedObject;
 import com.hazelcast.map.IMap;
 import org.springframework.shell.standard.ShellComponent;
@@ -8,7 +9,7 @@ import org.springframework.shell.standard.ShellMethod;
 @ShellComponent
 public class HzObjectCommands extends AbstractCommand {
 
-    @ShellMethod("List Hazelcast distributed objects")
+    @ShellMethod(key = "objects", value = "List Hazelcast distributed objects")
     void objects() {
         embedInTable(
                 new String[]{"type", "name"},

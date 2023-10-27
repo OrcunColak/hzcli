@@ -1,7 +1,6 @@
 package com.colak.hzcli;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -23,7 +22,7 @@ public class HzCliApplication {
 
     @PostConstruct
     public void postConstruct() {
-        IMap<String, String> map = hazelcastClient.getMap("testmap");
-        map.put("1", "1");
+//        IMap<String, String> map = hazelcastClient.getMap("testmap");
+//        map.put("1", "1");
     }
 }

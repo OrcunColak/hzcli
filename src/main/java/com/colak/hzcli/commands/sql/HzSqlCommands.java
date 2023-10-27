@@ -1,5 +1,7 @@
-package com.colak.hzcli.commands;
+package com.colak.hzcli.commands.sql;
 
+import com.colak.hzcli.commands.AbstractCommand;
+import com.colak.hzcli.commands.util.IteratorUtil;
 import com.hazelcast.sql.SqlColumnMetadata;
 import com.hazelcast.sql.SqlResult;
 import com.hazelcast.sql.SqlRow;

@@ -1,7 +1,7 @@
 package com.colak.hzcli.commands.map;
 
 import com.colak.hzcli.commands.AbstractCommand;
-import com.colak.hzcli.commands.IteratorUtil;
+import com.colak.hzcli.commands.util.IteratorUtil;
 import com.hazelcast.map.IMap;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

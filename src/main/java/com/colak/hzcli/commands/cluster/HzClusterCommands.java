@@ -1,5 +1,6 @@
-package com.colak.hzcli.commands;
+package com.colak.hzcli.commands.cluster;
 
+import com.colak.hzcli.commands.AbstractCommand;
 import com.hazelcast.version.MemberVersion;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
