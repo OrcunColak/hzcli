@@ -3,16 +3,14 @@
 This is a simple command line tool to access a Hazelcast cluster and execute some commands
 It uses Spring Shell underneath.
 
-Run the application with on of the following command:
+# Profiles
+You can select your profile which is lite or default using application.properties. 
+Lite profile starts a lite member. Default profile start a Hazelcast client
 
-This starts as Hazelcast client
+# Maven
+Run the application with the following command. 
 ```
 mvn spring-boot:run
-```
-
-This starts as Hazelcast lite member
-```
-mvn spring-boot:run "-Dspring-boot.run.profiles=lite" 
 ```
 
 ## Map Commands
