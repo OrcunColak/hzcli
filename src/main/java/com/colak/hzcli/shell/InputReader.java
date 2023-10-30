@@ -8,11 +8,11 @@ public class InputReader {
 
     public static final Character DEFAULT_MASK = '*';
 
-    private Character mask;
+    private final Character mask;
 
-    private LineReader lineReader;
+    private final LineReader lineReader;
 
-    private ShellHelper shellHelper;
+    private final ShellHelper shellHelper;
 
     public InputReader(LineReader lineReader, ShellHelper shellHelper) {
         this(lineReader, shellHelper, null);

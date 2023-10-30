@@ -7,6 +7,7 @@ import com.hazelcast.sql.SqlResult;
 import com.hazelcast.sql.SqlRow;
 import com.hazelcast.sql.SqlRowMetadata;
 import com.hazelcast.sql.SqlService;
+import com.hazelcast.sql.impl.ResultIterator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.TableModelBuilder;
 
-import java.util.Iterator;
 import java.util.List;
 
 @ShellComponent
@@ -30,13 +30,14 @@ public class HzSqlCommand extends AbstractCommand {
 //    sql "SELECT * from myworker1"
 //    sql "select * from table(generate_stream(1)) LIMIT 2"
 
-    @ShellMethod(key = "sql", value ="Select with HZ SQL")
-    void sql(@ShellOption @Valid @NotNull String sql) {
+    @ShellMethod(key = "sql", value = "Select with HZ SQL")
+    void sql(@ShellOption @Valid @NotNull String sql,
+             @ShellOption(value = {"-p",}, help = "Optional page size", defaultValue = "10") int pageSize) {
         try {
             SqlService sqlService = hazelcastClient.getSql();
             try (SqlResult sqlResult = sqlService.execute(sql)) {
                 if (sqlResult.isRowSet()) {
-                    printSelectResult(sqlResult);
+                    printSelectResult(sqlResult, pageSize);
                 }
                 shellHelper.printSuccess("Success");
             }
@@ -46,17 +47,16 @@ public class HzSqlCommand extends AbstractCommand {
         }
     }
 
-    private void printSelectResult(SqlResult sqlResult) {
+    private void printSelectResult(SqlResult sqlResult, int pageSize) {
         String[] columnNames = getColumnNames(sqlResult);
         int numberOfColumns = columnNames.length;
 
-        Iterator<SqlRow> iterator = sqlResult.iterator();
+        ResultIterator<SqlRow> iterator = (ResultIterator<SqlRow>) sqlResult.iterator();
 
         int page = 1;
-        final int fetchSize = 10;
         boolean continueLoop = true;
         while (continueLoop) {
-            List<SqlRow> list = IteratorUtil.takeNElements(iterator, fetchSize);
+            List<SqlRow> list = IteratorUtil.takeNElements(iterator, pageSize);
             if (list.isEmpty()) {
                 break;
             }
