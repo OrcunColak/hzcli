@@ -12,7 +12,7 @@ mvn spring-boot:run
 
 This starts as Hazelcast lite member
 ```
-mvn spring-boot:run "-Dspring-boot.run.profiles=lite"
+mvn spring-boot:run "-Dspring-boot.run.profiles=lite" 
 ```
 
 ## Map Commands

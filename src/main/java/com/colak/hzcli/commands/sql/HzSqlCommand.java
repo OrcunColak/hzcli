@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.UserInterruptException;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -65,7 +66,7 @@ public class HzSqlCommand extends AbstractCommand {
             if (iterator.hasNext()) {
                 try {
                     inputReader.prompt("Press any key to view the next page " + page);
-                } catch (EndOfFileException exception) {
+                } catch (EndOfFileException | UserInterruptException exception) {
                     continueLoop = false;
                 }
             }

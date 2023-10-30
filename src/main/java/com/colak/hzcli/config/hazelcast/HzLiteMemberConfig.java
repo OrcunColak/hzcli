@@ -1,5 +1,6 @@
-package com.colak.hzcli.config;
+package com.colak.hzcli.config.hazelcast;
 
+import com.colak.hzcli.config.Profiles;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;

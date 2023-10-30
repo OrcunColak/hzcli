@@ -1,4 +1,4 @@
-package com.colak.hzcli.config;
+package com.colak.hzcli.config.shell;
 
 import com.colak.hzcli.shell.InputReader;
 import com.colak.hzcli.shell.ShellHelper;
