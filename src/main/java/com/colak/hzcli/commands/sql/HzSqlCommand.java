@@ -12,17 +12,27 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jline.reader.EndOfFileException;
-import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.utils.NonBlockingReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.TableModelBuilder;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @ShellComponent
 @Slf4j
 public class HzSqlCommand extends AbstractCommand {
+
+    @Autowired
+    @Lazy
+    private Terminal terminal;
+
 
 //    sql "CREATE DATA CONNECTION IF NOT EXISTS foo TYPE JDBC SHARED OPTIONS('jdbcUrl'='jdbc:postgresql://localhost:5432/db','user'='postgres','password'='postgres')"
 //    sql "CREATE OR REPLACE MAPPING myworker  DATA CONNECTION foo"
@@ -55,24 +65,52 @@ public class HzSqlCommand extends AbstractCommand {
 
         int page = 1;
         boolean continueLoop = true;
+        NonBlockingReader nonBlockingReader = terminal.reader();
+
         while (continueLoop) {
-            List<SqlRow> list = IteratorUtil.takeNElements(iterator, pageSize);
-            if (list.isEmpty()) {
+            List<SqlRow> list = new ArrayList<>();
+            boolean iteratorDone = IteratorUtil.takeElementsFromStream(iterator, list);
+            if (iteratorDone) {
                 break;
             }
-            page++;
-            embedInTable(columnNames,
-                    builder -> list.forEach(sqlRow -> printSqlRow(builder, sqlRow, numberOfColumns)));
-            if (iterator.hasNext()) {
+
+            while (list.size() >= pageSize) {
+                List<SqlRow> sublist = subList(list, pageSize);
+
+                embedInTable(columnNames,
+                        builder -> sublist.forEach(sqlRow -> printSqlRow(builder, sqlRow, numberOfColumns)));
+                page++;
                 try {
                     inputReader.prompt("Press any key to view the next page " + page);
-                } catch (EndOfFileException | UserInterruptException exception) {
+                } catch (EndOfFileException exception) {
                     continueLoop = false;
                 }
             }
-        }
 
+            try {
+                if (!list.isEmpty()) {
+                    embedInTable(columnNames,
+                            builder -> list.forEach(sqlRow -> printSqlRow(builder, sqlRow, numberOfColumns)));
+                }
+                int read = nonBlockingReader.read(1);
+                // Ctrl + D
+                if (read == -1) {
+                    continueLoop = false;
+                }
+            } catch (IOException exception) {
+                continueLoop = false;
+            }
+        }
     }
+
+    List<SqlRow> subList(List<SqlRow> list, int numberOfItems) {
+        List<SqlRow> sublist = new ArrayList<>();
+        for (int index = 0; index < numberOfItems; index++) {
+            sublist.add(list.remove(0));
+        }
+        return sublist;
+    }
+
     private void printSqlRow(TableModelBuilder<Object> builder, SqlRow sqlRow, int numberOfColumns) {
         builder.addRow();
         for (int index = 0; index < numberOfColumns; index++) {
