@@ -35,7 +35,7 @@ public abstract class AbstractCommand {
         this.hazelcastClient = hazelcastClient;
     }
 
-    protected void embedInTable(String[] names, Consumer<TableModelBuilder<Object>> fillData) {
+    public void embedInTable(String[] names, Consumer<TableModelBuilder<Object>> fillData) {
         TableModelBuilder<Object> builder = new TableModelBuilder<>();
         builder.addRow();
         for (String name : names) {

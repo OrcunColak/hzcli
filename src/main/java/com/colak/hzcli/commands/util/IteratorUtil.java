@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 @UtilityClass
 public class IteratorUtil {
 
-    public static <T> List<T> takeNElements(Iterator<T> iterator, int n) {
+    public <T> List<T> takeNElements(Iterator<T> iterator, int n) {
         List<T> elements = new ArrayList<>();
 
         for (int index = 0; index < n && iterator.hasNext(); index++) {
@@ -21,7 +21,7 @@ public class IteratorUtil {
         return elements;
     }
 
-    public static boolean takeElementsFromStream(ResultIterator<SqlRow> iterator, List<SqlRow> elements) {
+    public boolean takeElementsFromResultIterator(ResultIterator<SqlRow> iterator, List<SqlRow> elements) {
         while (true) {
             ResultIterator.HasNextResult hasNextResult = iterator.hasNext(1, TimeUnit.SECONDS);
             if (hasNextResult.equals(ResultIterator.HasNextResult.DONE)) {
