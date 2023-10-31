@@ -1,8 +1,8 @@
 package com.colak.hzcli.commands.sql.util;
 
 import com.colak.hzcli.commands.AbstractCommand;
-import com.colak.hzcli.commands.util.IteratorUtil;
 import com.colak.hzcli.commands.util.ListUtils;
+import com.colak.hzcli.commands.util.ResultSetIteratorUtil;
 import com.colak.hzcli.shell.InputReader;
 import com.hazelcast.sql.SqlColumnMetadata;
 import com.hazelcast.sql.SqlResult;
@@ -45,28 +45,11 @@ class SqlResultPrinter {
 
         while (continueLoop) {
             List<SqlRow> list = new ArrayList<>();
-            boolean iteratorDone = IteratorUtil.takeElementsFromResultIterator(iterator, list);
+            boolean iteratorDone = ResultSetIteratorUtil.takeAllElements(iterator, list);
             if (iteratorDone) {
-                if (page == 1) {
-                    printEmptyResultSet(columnNames);
-                }
+                printDoneIterator(list,columnNames);
                 break;
             }
-
-            while (list.size() >= pageSize) {
-                List<SqlRow> sublist = ListUtils.takeNElements(list, pageSize);
-
-                abstractCommand.embedInTable(columnNames,
-                        builder -> sublist.forEach(sqlRow -> printSqlRow(builder, sqlRow, numberOfColumns)));
-                page++;
-                try {
-                    inputReader.prompt("Press any key to view the next page " + page);
-                } catch (EndOfFileException exception) {
-                    continueLoop = false;
-                    break;
-                }
-            }
-
             try {
                 if (!list.isEmpty()) {
                     abstractCommand.embedInTable(columnNames,
@@ -83,6 +66,28 @@ class SqlResultPrinter {
         }
     }
 
+    private void printDoneIterator (List<SqlRow> list,String[] columnNames) {
+        if ((list.isEmpty() && page == 1)) {
+            printEmptyResultSet(columnNames);
+            return;
+        }
+        int numberOfColumns = columnNames.length;
+        while (!list.isEmpty()) {
+            List<SqlRow> sublist = ListUtils.removeNElements(list, pageSize);
+
+            abstractCommand.embedInTable(columnNames,
+                    builder -> sublist.forEach(sqlRow -> printSqlRow(builder, sqlRow, numberOfColumns)));
+            page++;
+            if (!list.isEmpty()) {
+                try {
+                    inputReader.prompt("Press any key to view the next page " + page);
+                } catch (EndOfFileException exception) {
+                    continueLoop = false;
+                    break;
+                }
+            }
+        }
+    }
     private void printEmptyResultSet(String[] columnNames) {
         abstractCommand.embedInTable(columnNames,
                 builder -> {

@@ -25,9 +25,19 @@ public class HzSqlCommand extends AbstractCommand {
         this.terminal = terminal;
     }
 
+    @ShellMethod(key = "mappings", value = "Select mapping names of Hazelcast")
+    void mappings() {
+        sql("SELECT * from information_schema.mappings", Integer.MAX_VALUE);
+    }
+
+    @ShellMethod(key = "columns", value = "Select mapped columns Hazelcast")
+    void columns() {
+        sql("SELECT * from information_schema.columns", Integer.MAX_VALUE);
+    }
+
     @ShellMethod(key = "tables", value = "Select mapped tables of Hazelcast")
     void tables() {
-        sql("SELECT table_catalog, table_schema, table_name from information_schema.tables", Integer.MAX_VALUE);
+        sql("SELECT * from information_schema.mappings", Integer.MAX_VALUE);
     }
 
 //    sql "CREATE DATA CONNECTION IF NOT EXISTS foo TYPE JDBC SHARED OPTIONS('jdbcUrl'='jdbc:postgresql://localhost:5432/db','user'='postgres','password'='postgres')"
