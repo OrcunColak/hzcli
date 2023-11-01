@@ -37,7 +37,7 @@ public class HzSqlCommand extends AbstractCommand {
 
     @ShellMethod(key = "tables", value = "Select mapped tables of Hazelcast")
     void tables() {
-        sql("SELECT * from information_schema.mappings", Integer.MAX_VALUE);
+        sql("SELECT * from information_schema.tables", Integer.MAX_VALUE);
     }
 
 //    sql "CREATE DATA CONNECTION IF NOT EXISTS foo TYPE JDBC SHARED OPTIONS('jdbcUrl'='jdbc:postgresql://localhost:5432/db','user'='postgres','password'='postgres')"

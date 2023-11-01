@@ -6,7 +6,9 @@ import com.hazelcast.core.HazelcastInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.shell.table.BorderStyle;
+import org.springframework.shell.table.Table;
 import org.springframework.shell.table.TableBuilder;
+import org.springframework.shell.table.TableModel;
 import org.springframework.shell.table.TableModelBuilder;
 
 import java.util.function.Consumer;
@@ -35,16 +37,19 @@ public abstract class AbstractCommand {
         this.hazelcastClient = hazelcastClient;
     }
 
-    public void embedInTable(String[] names, Consumer<TableModelBuilder<Object>> fillData) {
+    public void embedInTable(String[] columnNames, Consumer<TableModelBuilder<Object>> fillData) {
         TableModelBuilder<Object> builder = new TableModelBuilder<>();
         builder.addRow();
-        for (String name : names) {
-            builder.addValue(name);
+        for (String columnName : columnNames) {
+            builder.addValue(columnName);
         }
         fillData.accept(builder);
 
-        TableBuilder tableBuilder = new TableBuilder(builder.build());
+        TableModel tableModel = builder.build();
+
+        TableBuilder tableBuilder = new TableBuilder(tableModel);
         tableBuilder.addHeaderAndVerticalsBorders(BorderStyle.oldschool);
-        shellHelper.printInfo(tableBuilder.build().render(100));
+        Table table = tableBuilder.build();
+        shellHelper.printInfo(table.render(100));
     }
 }
