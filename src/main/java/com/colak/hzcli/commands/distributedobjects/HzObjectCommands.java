@@ -3,6 +3,8 @@ package com.colak.hzcli.commands.distributedobjects;
 import com.colak.hzcli.commands.AbstractCommand;
 import com.hazelcast.core.DistributedObject;
 import com.hazelcast.map.IMap;
+import com.hazelcast.ringbuffer.Ringbuffer;
+import com.hazelcast.topic.ITopic;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
@@ -25,6 +27,10 @@ public class HzObjectCommands extends AbstractCommand {
         String type = "";
         if (distributedObject instanceof IMap) {
             type = "IMap";
+        } else if (distributedObject instanceof ITopic<?>) {
+            type = "ITopic";
+        } else if (distributedObject instanceof Ringbuffer<?>) {
+            type = "Ringbuffer";
         }
         return type;
     }
