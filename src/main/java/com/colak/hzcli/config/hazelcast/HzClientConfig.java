@@ -16,7 +16,9 @@ public class HzClientConfig {
 
     @Bean
     public ClientConfig hazelcastConfig() {
-        return new ClientConfig();
+        ClientConfig clientConfig = new ClientConfig();
+        clientConfig.setInstanceName("hzcli-client");
+        return clientConfig;
     }
 
     @Bean
