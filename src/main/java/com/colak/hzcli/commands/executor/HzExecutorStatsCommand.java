@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 @ShellComponent
 public class HzExecutorStatsCommand extends AbstractCommand {
 
-    @ShellMethod(key = "e.stats", prefix = "-", value = "List all executor stats")
+    @ShellMethod(key = "e.stats", value = "List all executor stats")
     void showExecutorStats() {
         List<String> executorNamesList = List.of(
                 ExecutionService.SYSTEM_EXECUTOR,

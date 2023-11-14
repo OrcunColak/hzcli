@@ -25,12 +25,12 @@ public class HzSqlCommand extends AbstractCommand {
         this.terminal = terminal;
     }
 
-    @ShellMethod(key = "columns", value = "Select mapped columns Hazelcast")
+    @ShellMethod(key = "sql.columns", value = "Select mapped columns Hazelcast")
     void columns() {
         sql("SELECT * from information_schema.columns", Integer.MAX_VALUE);
     }
 
-    @ShellMethod(key = "tables", value = "Select mapped tables of Hazelcast")
+    @ShellMethod(key = "sql.tables", value = "Select mapped tables of Hazelcast")
     void tables() {
         sql("SELECT * from information_schema.tables", Integer.MAX_VALUE);
     }

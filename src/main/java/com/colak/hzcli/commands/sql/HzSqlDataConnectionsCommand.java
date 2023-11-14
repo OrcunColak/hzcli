@@ -8,7 +8,7 @@ import org.springframework.shell.standard.ShellMethod;
 @Slf4j
 public class HzSqlDataConnectionsCommand extends HzSqlCommand {
 
-    @ShellMethod(key = "dataconnections", value = "Select data connections of Hazelcast")
+    @ShellMethod(key = "sql.datacons", value = "List all data connections created by SQL")
     void dataConnections() {
 //  SHOW DATA CONNECTIONS output is too short
 //  +--------+---------------+--------------+

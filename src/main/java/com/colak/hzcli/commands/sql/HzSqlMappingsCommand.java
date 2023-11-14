@@ -8,7 +8,7 @@ import org.springframework.shell.standard.ShellMethod;
 @Slf4j
 public class HzSqlMappingsCommand extends HzSqlCommand {
 
-    @ShellMethod(key = "mappings", value = "Select mappings of Hazelcast")
+    @ShellMethod(key = "sql.mappings", value = "List all mappings created by SQL")
     void mappings() {
         sql("SELECT * from information_schema.mappings", Integer.MAX_VALUE);
     }
