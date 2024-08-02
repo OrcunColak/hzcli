@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.colak</groupId>
@@ -18,7 +18,7 @@
         <java.version>17</java.version>
         <lombok.version>1.18.28</lombok.version>
         <spring-shell.version>3.1.3</spring-shell.version>
-        <hazelcast.version>5.4.0-SNAPSHOT</hazelcast.version>
+        <hazelcast.version>5.4.0</hazelcast.version>
         <jansi.version>3.23.0</jansi.version>
     </properties>
 
